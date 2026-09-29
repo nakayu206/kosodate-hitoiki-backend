@@ -1,0 +1,10 @@
+{
+  "globs": ["**/*.md"],
+  "ignores": ["node_modules/**", ".github/ISSUE_TEMPLATE/**", ".github/pull_request_template.md"],
+  "config": {
+    "default": true,
+    // 日本語の文章・表を文字数や表示幅で制限しない。
+    "MD013": false,
+    "MD060": false
+  }
+}

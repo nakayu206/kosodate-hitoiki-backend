@@ -1,0 +1,16 @@
+{
+  "name": "kosodate-hitoiki-backend",
+  "private": true,
+  "scripts": {
+    "lint:md": "markdownlint-cli2",
+    "lint:config": "prettier --check \".github/workflows/*.{yml,yaml}\" \"*.json\"",
+    "check": "npm run lint:md && npm run lint:config"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "markdownlint-cli2": "0.23.3",
+    "prettier": "3.9.9"
+  }
+}

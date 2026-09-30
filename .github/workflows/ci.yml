@@ -54,6 +54,8 @@ jobs:
         run: npm run supabase:start
       - name: Run pgTAP database tests
         run: npx supabase test db
+      - name: Run concurrency tests
+        run: npm run test:concurrency
       - name: Stop local Supabase
         if: always()
         run: npm run supabase:stop

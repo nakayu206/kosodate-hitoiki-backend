@@ -1,0 +1,2 @@
+# シェルスクリプトはWindowsのcheckoutでもLFに固定する（CRLFだとbashで動かない）
+*.sh text eol=lf

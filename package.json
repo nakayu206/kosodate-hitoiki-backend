@@ -12,7 +12,8 @@
     "supabase:reset": "supabase db reset",
     "functions:check": "cd supabase/functions && deno fmt --check && deno lint && deno check _shared",
     "functions:test": "cd supabase/functions && deno test --frozen",
-    "functions:eval": "cd supabase/functions && deno run --allow-env=OPENAI_API_KEY --allow-net=api.openai.com _shared/moderation/eval.ts"
+    "functions:eval": "cd supabase/functions && deno run --allow-env=OPENAI_API_KEY --allow-net=api.openai.com _shared/moderation/eval.ts",
+    "test:concurrency": "bash supabase/tests/concurrency/run.sh"
   },
   "engines": {
     "node": ">=22"

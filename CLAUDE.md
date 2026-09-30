@@ -70,6 +70,7 @@ npm run check                # Markdown・設定ファイルのlint
 npm run supabase:start       # ローカルSupabaseスタック起動（Docker Desktop必須）
 npx supabase db reset        # マイグレーション・シードからDBを再構築
 npx supabase test db         # pgTAPテスト（supabase/tests/）を実行
+npm run test:concurrency     # 同時実行の競合テスト（要 supabase start）
 npm run supabase:stop        # 停止
 npm run functions:check      # Edge Functionsのfmt・lint・型検査（Deno、supabase/functions/）
 npm run functions:test       # Edge FunctionsのDenoテスト

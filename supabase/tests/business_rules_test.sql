@@ -1,7 +1,7 @@
 -- トリガー・業務ルールの検証（docs/バックエンド設計.md・docs/スキーマ定義.md）。
 
 BEGIN;
-SELECT plan(12);
+SELECT plan(13);
 
 INSERT INTO auth.users (id) VALUES
   ('00000000-0000-0000-0000-0000000000a1'), -- 投稿者
@@ -122,6 +122,17 @@ SELECT lives_ok(
   $$insert into public.reports (reporter_id, target_type, target_id, reason)
     values ('00000000-0000-0000-0000-0000000000a2', 'post', '00000000-0000-0000-0000-0000000000f1', 'other')$$,
   '再表示後は同じ通報者が改めて通報できる'
+);
+
+-- 再表示済みの対象は、新たな通報が3人に達しても自動で再び非表示にならない
+INSERT INTO public.reports (reporter_id, target_type, target_id, reason) VALUES
+  ('00000000-0000-0000-0000-0000000000a3', 'post', '00000000-0000-0000-0000-0000000000f1', 'other'),
+  ('00000000-0000-0000-0000-0000000000a4', 'post', '00000000-0000-0000-0000-0000000000f1', 'other');
+
+SELECT is(
+  (SELECT hidden_at FROM public.posts WHERE id = '00000000-0000-0000-0000-0000000000f1'),
+  NULL,
+  '再表示後に新たな通報が3人分集まっても再び自動非表示にならない'
 );
 
 SELECT * FROM finish();

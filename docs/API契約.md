@@ -177,7 +177,7 @@ DELETE /functions/v1/posts/{id}/reaction
 Authorization: Bearer <token>
 ```
 
-`PUT`は登録・変更を1操作で扱う（`on conflict do update`）。件数は`reactions`テーブルへの直接SELECTでは取得できない（他者の行が見えてしまうため）。投稿者のみ以下のRPC（`security definer`関数）で取得する（[スキーマ定義](スキーマ定義.md)4節）：
+`PUT`は登録・変更を1操作で扱う（`on conflict do update`）。件数は`reactions`テーブルへの直接SELECTでは取得できない（他者の行が見えてしまうため）。投稿者本人と運営者のみ以下のRPC（`security definer`関数）で取得する（運営者にも共感の行そのものは見せない）（[スキーマ定義](スキーマ定義.md)4節）：
 
 ```http
 POST /rest/v1/rpc/get_post_reaction_count

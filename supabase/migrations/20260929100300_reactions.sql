@@ -42,12 +42,6 @@ create policy reactions_select_own
   to authenticated
   using (user_id = auth.uid());
 
-create policy reactions_select_admin
-  on public.reactions
-  for select
-  to authenticated
-  using (public.is_admin());
-
 create policy reactions_insert_own
   on public.reactions
   for insert
@@ -67,7 +61,8 @@ create policy reactions_delete_own
   to authenticated
   using (user_id = auth.uid());
 
--- 投稿者のみが件数を取得できるSECURITY DEFINER関数（テーブルのRLSに依存しない）。
+-- 投稿者本人・運営者が件数のみ取得できるSECURITY DEFINER関数（テーブルのRLSに依存しない）。
+-- 運営者にも誰がどの共感をしたかの行は見せない（docs/権限表.md 4節：件数のみ）。
 create or replace function public.get_post_reaction_count(p_post_id uuid)
 returns bigint
 language sql
@@ -78,7 +73,7 @@ as $$
   select count(*)
   from public.reactions r
   join public.posts p on p.id = r.post_id
-  where r.post_id = p_post_id and p.author_id = auth.uid();
+  where r.post_id = p_post_id and (p.author_id = auth.uid() or public.is_admin());
 $$;
 
-comment on function public.get_post_reaction_count(uuid) is '呼び出し者が投稿者本人の場合のみ件数を返す。それ以外は0を返す。';
+comment on function public.get_post_reaction_count(uuid) is '呼び出し者が投稿者本人または運営者の場合のみ件数を返す。それ以外は0を返す。';

@@ -3,7 +3,7 @@
 -- 公開経路からプロフィール本文・認証情報・共感件数が漏れないことを確認する。
 
 BEGIN;
-SELECT plan(15);
+SELECT plan(17);
 
 -- フィクスチャ（postgresロールで作成。RLSの影響を受けない）。
 INSERT INTO auth.users (id) VALUES
@@ -132,6 +132,18 @@ SELECT is(
   (SELECT count(*)::int FROM public.posts),
   1,
   '運営者は全投稿を参照できる'
+);
+
+SELECT is(
+  (SELECT public.get_post_reaction_count('00000000-0000-0000-0000-0000000000f1')),
+  1::bigint,
+  '運営者は共感件数を取得できる'
+);
+
+SELECT is(
+  (SELECT count(*)::int FROM public.reactions),
+  0,
+  '運営者でも共感の行（誰がどの共感をしたか）は直接参照できない（件数のみ）'
 );
 
 RESET role;

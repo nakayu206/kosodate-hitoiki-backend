@@ -119,7 +119,9 @@ Idempotency-Key: <uuid>
 { "id": "b3c1...", "created_at": "2026-09-29T03:00:00Z" }
 ```
 
-送信前チェックで`MODERATION_CONFIRM_REQUIRED`が返る場合、クライアントは確認表示後に`{"...": "...", "confirmed": true}`を付けて再送する。
+送信前チェックで`MODERATION_CONFIRM_REQUIRED`が返る場合、クライアントは確認表示後に`{"...": "...", "confirmed": true}`を付けて再送する。`MODERATION_REJECTED`は`confirmed`を付けても覆らない。エラーの`details.reasons`には理由コード（`banned_word`・`pii_phone`・`harassment`等）だけを入れ、本文は含めない。
+
+**設計案**：自分や子どもへの危害をほのめかす内容は投稿を止めず、書き込んだ本人へのレスポンスにだけ`"support_notice": true`を含め、クライアントが相談先を案内する。他の利用者へは公開しない（詳細は[送信前チェック評価](送信前チェック評価.md)）。
 
 ### 反応モード・受付状態の変更
 

@@ -21,6 +21,7 @@ kosodate-hitoiki（子育てのぐち・相談・コツや体験談を共有す�
 | [バックエンド設計](docs/バックエンド設計.md) | 担当範囲、権限、処理の境界 |
 | [データ設計案](docs/データ設計案.md) | 経緯・論点の記録（テーブル定義そのものではない） |
 | [スキーマ定義](docs/スキーマ定義.md) | 確定したテーブル定義・ER概要（実装の一次資料） |
+| [送信前チェック評価](docs/送信前チェック評価.md) | 送信前チェックの判定方式・閾値の初期案、日本語の評価例と結果 |
 | [権限表](docs/権限表.md) | 未ログイン／本人／他人／運営者の権限マトリクス |
 | [API契約](docs/API契約.md) | リクエスト／レスポンス例、エラー、ページング |
 | [開発・運用方針](docs/開発・運用方針.md) | ブランチ、環境構築、CI、バックアップ |
@@ -70,6 +71,8 @@ npm run supabase:start       # ローカルSupabaseスタック起動（Docker D
 npx supabase db reset        # マイグレーション・シードからDBを再構築
 npx supabase test db         # pgTAPテスト（supabase/tests/）を実行
 npm run supabase:stop        # 停止
+npm run functions:check      # Edge Functionsのfmt・lint・型検査（Deno、supabase/functions/）
+npm run functions:test       # Edge FunctionsのDenoテスト
 ```
 
 マイグレーションを追加・変更したら、必ず`npx supabase db reset`と`npx supabase test db`をローカルで実行してから push する。CIの`Database (migrations and RLS)`ジョブでも同じ検証が走る。

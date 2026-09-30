@@ -9,12 +9,16 @@
     "supabase:start": "supabase start",
     "supabase:stop": "supabase stop",
     "supabase:status": "supabase status",
-    "supabase:reset": "supabase db reset"
+    "supabase:reset": "supabase db reset",
+    "functions:check": "cd supabase/functions && deno fmt --check && deno lint && deno check _shared",
+    "functions:test": "cd supabase/functions && deno test --frozen",
+    "functions:eval": "cd supabase/functions && deno run --allow-env=OPENAI_API_KEY --allow-net=api.openai.com _shared/moderation/eval.ts"
   },
   "engines": {
     "node": ">=22"
   },
   "devDependencies": {
+    "deno": "2.9.6",
     "markdownlint-cli2": "0.23.3",
     "prettier": "3.9.9",
     "supabase": "2.118.0"

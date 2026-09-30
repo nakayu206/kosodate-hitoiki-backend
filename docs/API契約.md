@@ -67,7 +67,7 @@ GET /rest/v1/posts?select=*&order=created_at.desc,id.desc&limit=20&or=(created_a
 ### プロフィール取得（公開ニックネームのみ）
 
 ```http
-GET /rest/v1/public_profiles?id=eq.<user_id>&select=id,nickname,icon_key
+GET /rest/v1/public_profiles?id=eq.<user_id>&select=id,nickname,icon_key,avatar_path
 ```
 
 `public_profiles`はbio・child_age_rangeを含まない公開ビュー（[スキーマ定義](スキーマ定義.md)2節、RLSでプロフィール本文を保護）。

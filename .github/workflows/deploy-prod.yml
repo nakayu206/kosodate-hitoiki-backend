@@ -10,6 +10,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 concurrency:
   group: deploy-prod
@@ -19,7 +20,7 @@ jobs:
   deploy:
     name: Migrate prod project
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 25
     if: github.ref == 'refs/heads/main'
     environment: production
     env:
@@ -27,6 +28,24 @@ jobs:
       SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
       SUPABASE_PROJECT_REF: ${{ vars.SUPABASE_PROJECT_REF }}
     steps:
+      - name: Wait for CI on this commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+        run: |
+          # 同じコミットのCIが成功するまで待つ。失敗・タイムアウト時はデプロイしない。
+          for i in $(seq 1 60); do
+            run=$(gh api "repos/$REPO/actions/workflows/ci.yml/runs?head_sha=$SHA&event=push" \
+              --jq '.workflow_runs[0] | "\(.status) \(.conclusion)"')
+            echo "CI: $run"
+            case "$run" in
+              "completed success") exit 0 ;;
+              "completed "*) echo "CIが成功していないためデプロイしません"; exit 1 ;;
+            esac
+            sleep 15
+          done
+          echo "CIの完了を待ちきれませんでした"; exit 1
       - name: Checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:

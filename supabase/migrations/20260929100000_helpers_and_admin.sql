@@ -13,15 +13,6 @@ alter table public.admin_users enable row level security;
 -- admin_usersへの書き込みはEdge Functions（service_role）専用。
 -- 本人・他人の直接INSERT/UPDATE/DELETEは許可しない。
 
-create policy admin_users_select_self_or_admin
-  on public.admin_users
-  for select
-  to authenticated
-  using (
-    user_id = auth.uid()
-    or exists (select 1 from public.admin_users a where a.user_id = auth.uid())
-  );
-
 create or replace function public.is_admin()
 returns boolean
 language sql
@@ -33,6 +24,14 @@ as $$
 $$;
 
 comment on function public.is_admin() is '呼び出し中の利用者が運営者かどうかを判定する。RLSポリシーから利用する。';
+
+-- ポリシー内でadmin_usersを直接副問い合わせすると無限再帰になるため、
+-- RLSを迂回するsecurity definer関数is_admin()を経由する。
+create policy admin_users_select_self_or_admin
+  on public.admin_users
+  for select
+  to authenticated
+  using (user_id = auth.uid() or public.is_admin());
 
 -- updated_atを自動更新する共通トリガー関数。
 create or replace function public.set_updated_at()

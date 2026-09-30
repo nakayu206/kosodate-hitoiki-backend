@@ -142,11 +142,18 @@ create policy posts_select_admin
   using (public.is_admin());
 
 -- コメント本文はログイン必須。一時非表示は運営者のみ参照可（docs/権限表.md 3節）。
+-- 親投稿が一時非表示の間はコメント・返信も一般利用者から隠す（Issue #7決定）。
 create policy comments_select_authenticated
   on public.comments
   for select
   to authenticated
-  using (hidden_at is null);
+  using (
+    hidden_at is null
+    and exists (
+      select 1 from public.posts p
+      where p.id = comments.post_id and p.hidden_at is null
+    )
+  );
 
 create policy comments_select_admin
   on public.comments

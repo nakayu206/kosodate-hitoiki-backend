@@ -23,8 +23,11 @@ security definer
 set search_path = public
 as $$
   select count(*)
-  from public.comments
-  where post_id = p_post_id and deleted_at is null and hidden_at is null;
+  from public.comments c
+  join public.posts p on p.id = c.post_id
+  where c.post_id = p_post_id
+    and c.deleted_at is null and c.hidden_at is null
+    and p.hidden_at is null;
 $$;
 
 comment on function public.post_comment_count(uuid) is

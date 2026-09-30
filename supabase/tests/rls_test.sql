@@ -29,9 +29,10 @@ INSERT INTO public.reactions (post_id, user_id, reaction_type_id) VALUES
 -- === 未ログイン（anon） ===
 SET LOCAL role = 'anon';
 
-SELECT is(
-  (SELECT count(*)::int FROM public.profiles),
-  0,
+SELECT throws_ok(
+  $$select count(*) from public.profiles$$,
+  '42501',
+  null,
   '未ログインは profiles テーブルへ直接アクセスできない'
 );
 
@@ -47,9 +48,10 @@ SELECT hasnt_column('public', 'public_profiles', 'bio',
 SELECT hasnt_column('public', 'public_profiles', 'child_age_range',
   'public_profiles に子どもの年齢帯（child_age_range）は含まれない');
 
-SELECT is(
-  (SELECT count(*)::int FROM public.comments),
-  0,
+SELECT throws_ok(
+  $$select count(*) from public.comments$$,
+  '42501',
+  null,
   '未ログインは comments テーブルへ直接アクセスできない'
 );
 
@@ -59,10 +61,11 @@ SELECT is(
   '未ログインでも public_posts から公開投稿を取得できる'
 );
 
-SELECT is(
-  (SELECT public.get_post_reaction_count('00000000-0000-0000-0000-0000000000f1')),
-  0::bigint,
-  '未ログイン（投稿者でない）は共感件数を取得できない（0が返る）'
+SELECT throws_ok(
+  $$select public.get_post_reaction_count('00000000-0000-0000-0000-0000000000f1')$$,
+  '42501',
+  null,
+  '未ログインは共感件数の関数を実行できない'
 );
 
 RESET role;
